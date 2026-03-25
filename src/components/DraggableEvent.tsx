@@ -37,7 +37,7 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
     <div
       ref={containerRef}
       onPointerDown={(e) => handlePointerDown(e, 'move')}
-      className={`absolute top-1 bottom-1 flex items-center justify-center px-4 rounded-sm text-black text-xs font-medium shadow-sm border border-black/10 group/event transition-shadow ${dragMode ? 'shadow-md opacity-90 scale-100 touch-none' : ''}`}
+      className={`absolute top-1 bottom-1 flex items-center justify-center px-1 rounded-sm text-black text-xs font-medium shadow-sm border border-black/10 group/event transition-shadow ${dragMode ? 'shadow-md opacity-90 scale-100 touch-none' : ''}`}
       style={getEventStyle(currentStart, currentEnd)}
       title={`${evt.title} (${Math.round(currentStart)} - ${Math.round(currentEnd)})`}
     >
