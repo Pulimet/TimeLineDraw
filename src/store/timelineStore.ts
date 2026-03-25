@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
 import type { Flow, TimelineEvent } from '../types/timeline';
+import { hasOverlap } from '../utils/overlap';
 
 interface TimelineState {
   flows: Flow[];
@@ -14,22 +15,6 @@ interface TimelineState {
   updateEvent: (id: string, event: Partial<TimelineEvent>) => boolean;
   removeEvent: (id: string) => void;
 }
-
-const hasOverlap = (
-  events: TimelineEvent[],
-  flowId: string,
-  startMs: number,
-  endMs: number,
-  excludeEventId?: string
-) => {
-  return events.some(
-    (e) =>
-      e.flowId === flowId &&
-      e.id !== excludeEventId &&
-      startMs < e.endMs &&
-      endMs > e.startMs
-  );
-};
 
 export const useTimelineStore = create<TimelineState>()(
   persist(
