@@ -3,6 +3,7 @@ import { useTimelineStore } from '../store/timelineStore';
 import { FlowRow } from './FlowRow';
 import { useTimelineLayout } from '../hooks/useTimelineLayout';
 import { TimelineAxis } from './Timeline/TimelineAxis';
+import { TimelineGrid } from './Timeline/TimelineGrid';
 import {
   DndContext,
   closestCenter,
@@ -53,7 +54,8 @@ export const TimelineContainer: React.FC = () => {
             items={flows.map((f) => f.id)}
             strategy={verticalListSortingStrategy}
           >
-            <div className="flex flex-col relative w-full pt-2 pb-6">
+            <div className="flex flex-col relative w-full pt-2 pb-6 min-h-[200px]">
+              <TimelineGrid maxEndTime={maxEndTime} />
               {flows.map((flow) => (
                 <FlowRow
                   key={flow.id}

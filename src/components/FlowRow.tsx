@@ -32,7 +32,7 @@ export const FlowRow: React.FC<FlowRowProps> = ({ flow, events, maxEndTime }) =>
     <div 
       ref={setNodeRef} 
       style={style} 
-      className="flex border-b border-gray-200 relative bg-white group hover:bg-gray-50 transition-colors h-14"
+      className="flex border-b border-gray-200 relative group hover:bg-gray-50/50 transition-colors h-14"
     >
       {/* Sidebar / Row Label */}
       <div className="w-48 shrink-0 bg-gray-100 border-r border-gray-200 flex items-center px-2 py-1 relative z-10 shadow-[1px_0_0_rgba(0,0,0,0.1)] justify-between">
