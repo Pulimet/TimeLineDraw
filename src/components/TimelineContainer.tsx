@@ -53,7 +53,7 @@ export const TimelineContainer: React.FC = () => {
         <div className="w-48 shrink-0 bg-gray-100 border-r border-gray-200 flex items-center p-2 text-gray-700 font-semibold sticky left-0 z-20 shadow-[1px_0_0_rgba(0,0,0,0.1)]">
           Flows
         </div>
-        <div className="flex-grow relative h-10 min-w-[600px] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CgogIDxjaXJjbGUgY3g9IjEiIGN5PSIxIiByPSIxIiBmaWxsPSIjY2NjIi8+Cjwvc3ZnPg==')]">
+        <div className="flex-grow relative h-10 min-w-[600px]">
           {ticks.map((tick) => (
             <div
               key={tick}

@@ -10,10 +10,26 @@ interface TimelineState {
   removeFlow: (id: string) => void;
   updateFlowTitle: (id: string, title: string) => void;
   reorderFlows: (flows: Flow[]) => void;
-  addEvent: (event: Omit<TimelineEvent, 'id'>) => void;
-  updateEvent: (id: string, event: Partial<TimelineEvent>) => void;
+  addEvent: (event: Omit<TimelineEvent, 'id'>) => boolean;
+  updateEvent: (id: string, event: Partial<TimelineEvent>) => boolean;
   removeEvent: (id: string) => void;
 }
+
+const hasOverlap = (
+  events: TimelineEvent[],
+  flowId: string,
+  startMs: number,
+  endMs: number,
+  excludeEventId?: string
+) => {
+  return events.some(
+    (e) =>
+      e.flowId === flowId &&
+      e.id !== excludeEventId &&
+      startMs < e.endMs &&
+      endMs > e.startMs
+  );
+};
 
 export const useTimelineStore = create<TimelineState>()(
   persist(
@@ -39,15 +55,41 @@ export const useTimelineStore = create<TimelineState>()(
 
       reorderFlows: (flows) => set({ flows }),
 
-      addEvent: (event) =>
-        set((state) => ({
-          events: [...state.events, { ...event, id: uuidv4() }],
-        })),
+      addEvent: (event) => {
+        let added = false;
+        set((state) => {
+          if (hasOverlap(state.events, event.flowId, event.startMs, event.endMs)) {
+            added = false;
+            return state; // No change
+          }
+          added = true;
+          return {
+            events: [...state.events, { ...event, id: uuidv4() }],
+          };
+        });
+        return added;
+      },
 
-      updateEvent: (id, updatedFields) =>
-        set((state) => ({
-          events: state.events.map((e) => (e.id === id ? { ...e, ...updatedFields } : e)),
-        })),
+      updateEvent: (id, updatedFields) => {
+        let updated = false;
+        set((state) => {
+          const currentEvent = state.events.find(e => e.id === id);
+          if (!currentEvent) {
+            updated = false;
+            return state;
+          }
+          const merged = { ...currentEvent, ...updatedFields };
+          if (hasOverlap(state.events, merged.flowId, merged.startMs, merged.endMs, id)) {
+            updated = false;
+            return state; // Overlap, do not apply
+          }
+          updated = true;
+          return {
+            events: state.events.map((e) => (e.id === id ? merged : e)),
+          };
+        });
+        return updated;
+      },
 
       removeEvent: (id) =>
         set((state) => ({

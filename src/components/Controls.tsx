@@ -34,17 +34,22 @@ export const Controls: React.FC = () => {
   const handleAddEvent = (e: React.FormEvent) => {
     e.preventDefault();
     if (eventFlowId && eventTitle.trim() && eventEndMs > eventStartMs) {
-      addEvent({
+      const added = addEvent({
         flowId: eventFlowId,
         title: eventTitle.trim(),
         startMs: Number(eventStartMs),
         endMs: Number(eventEndMs),
         color: eventColor,
       });
-      // Reset somewhat
-      setEventTitle('');
-      setEventStartMs(eventEndMs);
-      setEventEndMs(eventEndMs + 1000);
+      
+      if (added) {
+        // Reset somewhat
+        setEventTitle('');
+        setEventStartMs(eventEndMs);
+        setEventEndMs(eventEndMs + 1000);
+      } else {
+        alert("Cannot add event: overlaps with an existing event in this flow.");
+      }
     }
   };
 
