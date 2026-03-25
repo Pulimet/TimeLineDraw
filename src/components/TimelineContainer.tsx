@@ -53,7 +53,7 @@ export const TimelineContainer: React.FC = () => {
             items={flows.map((f) => f.id)}
             strategy={verticalListSortingStrategy}
           >
-            <div className="flex flex-col relative w-full pt-2">
+            <div className="flex flex-col relative w-full pt-2 pb-6">
               {flows.map((flow) => (
                 <FlowRow
                   key={flow.id}
