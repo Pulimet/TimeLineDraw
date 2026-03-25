@@ -63,7 +63,7 @@ export const AddEventForm: React.FC = () => {
           <label className="block text-xs text-gray-500 mb-1">End (ms)</label>
           <input type="text" inputMode="numeric" pattern="\d*" required className="w-full border border-gray-300 rounded px-2 py-1 text-sm" value={eventEndMs} onChange={(e) => setEventEndMs(Number(e.target.value.replace(/\D/g, '')))} />
         </div>
-        <div className="col-span-1 flex items-center justify-between">
+        <div className="col-span-1 flex items-end justify-between">
           <div>
             <label className="block text-xs text-gray-500 mb-1">Color</label>
             <input
