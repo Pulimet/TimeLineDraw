@@ -14,21 +14,26 @@ export const AddFlowForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleAddFlow} className="bg-white p-4 rounded shadow border border-gray-200 flex-1">
+    <form onSubmit={handleAddFlow} className="bg-white p-4 rounded shadow border border-gray-200 flex-1 flex flex-col justify-end">
       <div className="flex gap-2">
-        <input
-          type="text"
-          className="flex-1 border border-gray-300 rounded px-2 py-1 text-sm"
-          placeholder="Flow Name..."
-          value={newFlowTitle}
-          onChange={(e) => setNewFlowTitle(e.target.value)}
-        />
-        <button 
-          type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium"
-        >
-          Add
-        </button>
+        <div className="flex-1">
+          <label className="block text-xs text-gray-500 mb-1">Add Flow</label>
+          <input
+            type="text"
+            className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
+            placeholder="Flow Name..."
+            value={newFlowTitle}
+            onChange={(e) => setNewFlowTitle(e.target.value)}
+          />
+        </div>
+        <div className="flex items-end">
+          <button 
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm font-medium"
+          >
+            Add
+          </button>
+        </div>
       </div>
     </form>
   );

@@ -4,7 +4,7 @@ import { AddEventForm } from './ControlsSection/AddEventForm';
 
 export const Controls: React.FC = () => {
   return (
-    <div className="flex flex-col md:flex-row gap-4 mb-6">
+    <div className="flex flex-col md:flex-row gap-4 mb-6 items-stretch">
       <AddFlowForm />
       <AddEventForm />
     </div>
