@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useTimelineStore } from '../../store/timelineStore';
 import { PREDEFINED_COLORS } from '../../constants/colors';
 
 export const AddEventForm: React.FC = () => {
   const { flows, addEvent } = useTimelineStore();
+  const titleInputRef = useRef<HTMLInputElement>(null);
   
   const [eventFlowId, setEventFlowId] = useState('');
   const [eventTitle, setEventTitle] = useState('');
@@ -29,6 +30,7 @@ export const AddEventForm: React.FC = () => {
         setEventTitle('');
         setEventStartMs(eventEndMs);
         setEventEndMs(eventEndMs + 1000);
+        titleInputRef.current?.focus();
       } else {
         alert("Cannot add event: overlaps with an existing event in this flow.");
       }
@@ -53,7 +55,7 @@ export const AddEventForm: React.FC = () => {
         </div>
         <div className="col-span-1">
           <label className="block text-xs text-gray-500 mb-1">Title</label>
-          <input type="text" required className="w-full border border-gray-300 rounded px-2 py-1 text-sm" placeholder="Event Name" value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} />
+          <input ref={titleInputRef} type="text" required className="w-full border border-gray-300 rounded px-2 py-1 text-sm" placeholder="Event Name" value={eventTitle} onChange={(e) => setEventTitle(e.target.value)} />
         </div>
         <div className="col-span-1">
           <label className="block text-xs text-gray-500 mb-1">Start (ms)</label>
