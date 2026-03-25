@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTimelineStore } from '../../store/timelineStore';
-import { ColorPicker } from './ColorPicker';
+import { PREDEFINED_COLORS } from './ColorPicker';
 
 export const AddEventForm: React.FC = () => {
   const { flows, addEvent } = useTimelineStore();
@@ -9,7 +9,7 @@ export const AddEventForm: React.FC = () => {
   const [eventTitle, setEventTitle] = useState('');
   const [eventStartMs, setEventStartMs] = useState(0);
   const [eventEndMs, setEventEndMs] = useState(1000);
-  const [eventColor, setEventColor] = useState('#38bdf8');
+  const [eventColor, setEventColor] = useState('#7dd3fc');
 
   const isValidFlowId = flows.some(f => f.id === eventFlowId);
   const effectiveFlowId = isValidFlowId ? eventFlowId : (flows.length > 0 ? flows[0].id : '');
@@ -37,7 +37,6 @@ export const AddEventForm: React.FC = () => {
 
   return (
     <form onSubmit={handleAddEvent} className="bg-white p-4 rounded shadow border border-gray-200 flex-[2]">
-      <h3 className="font-semibold text-gray-700 mb-3">Add Event</h3>
       <div className="grid grid-cols-2 md:grid-cols-6 gap-2 items-end">
         <div className="col-span-2">
           <label className="block text-xs text-gray-500 mb-1">Flow</label>
@@ -58,11 +57,11 @@ export const AddEventForm: React.FC = () => {
         </div>
         <div className="col-span-1">
           <label className="block text-xs text-gray-500 mb-1">Start (ms)</label>
-          <input type="number" required className="w-full border border-gray-300 rounded px-2 py-1 text-sm" value={eventStartMs} onChange={(e) => setEventStartMs(Number(e.target.value))} />
+          <input type="text" inputMode="numeric" pattern="\d*" required className="w-full border border-gray-300 rounded px-2 py-1 text-sm" value={eventStartMs} onChange={(e) => setEventStartMs(Number(e.target.value.replace(/\D/g, '')))} />
         </div>
         <div className="col-span-1">
           <label className="block text-xs text-gray-500 mb-1">End (ms)</label>
-          <input type="number" required className="w-full border border-gray-300 rounded px-2 py-1 text-sm" value={eventEndMs} onChange={(e) => setEventEndMs(Number(e.target.value))} />
+          <input type="text" inputMode="numeric" pattern="\d*" required className="w-full border border-gray-300 rounded px-2 py-1 text-sm" value={eventEndMs} onChange={(e) => setEventEndMs(Number(e.target.value.replace(/\D/g, '')))} />
         </div>
         <div className="col-span-1 flex items-center justify-between">
           <div>
@@ -72,7 +71,13 @@ export const AddEventForm: React.FC = () => {
               className="w-8 h-8 rounded border-none cursor-pointer p-0 m-0 box-border"
               value={eventColor}
               onChange={(e) => setEventColor(e.target.value)}
+              list="presetColors"
             />
+            <datalist id="presetColors">
+              {PREDEFINED_COLORS.map(color => (
+                <option key={color} value={color}>{color}</option>
+              ))}
+            </datalist>
           </div>
           <button 
             type="submit"
@@ -83,7 +88,6 @@ export const AddEventForm: React.FC = () => {
           </button>
         </div>
       </div>
-      <ColorPicker eventColor={eventColor} setEventColor={setEventColor} />
     </form>
   );
 };

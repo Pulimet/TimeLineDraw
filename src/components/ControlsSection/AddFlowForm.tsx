@@ -15,7 +15,6 @@ export const AddFlowForm: React.FC = () => {
 
   return (
     <form onSubmit={handleAddFlow} className="bg-white p-4 rounded shadow border border-gray-200 flex-1">
-      <h3 className="font-semibold text-gray-700 mb-3">Add Row (Flow)</h3>
       <div className="flex gap-2">
         <input
           type="text"
