@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTimelineStore } from '../store/timelineStore';
 
 export const Controls: React.FC = () => {
@@ -12,16 +12,9 @@ export const Controls: React.FC = () => {
   const [eventEndMs, setEventEndMs] = useState(1000);
   const [eventColor, setEventColor] = useState('#38bdf8');
 
-  useEffect(() => {
-    // If no flow is selected but there are flows available, select the first one
-    if (!eventFlowId && flows.length > 0) {
-      setEventFlowId(flows[0].id);
-    } 
-    // If the currently selected flow was deleted, fallback to the first available flow
-    else if (eventFlowId && flows.length > 0 && !flows.find(f => f.id === eventFlowId)) {
-      setEventFlowId(flows[0].id);
-    }
-  }, [flows, eventFlowId]);
+  // Derive the effectively selected flow ID to avoid syncing state in an effect
+  const isValidFlowId = flows.some(f => f.id === eventFlowId);
+  const effectiveFlowId = isValidFlowId ? eventFlowId : (flows.length > 0 ? flows[0].id : '');
 
   const handleAddFlow = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,9 +26,9 @@ export const Controls: React.FC = () => {
 
   const handleAddEvent = (e: React.FormEvent) => {
     e.preventDefault();
-    if (eventFlowId && eventTitle.trim() && eventEndMs > eventStartMs) {
+    if (effectiveFlowId && eventTitle.trim() && eventEndMs > eventStartMs) {
       const added = addEvent({
-        flowId: eventFlowId,
+        flowId: effectiveFlowId,
         title: eventTitle.trim(),
         startMs: Number(eventStartMs),
         endMs: Number(eventEndMs),
@@ -83,7 +76,7 @@ export const Controls: React.FC = () => {
             <label className="block text-xs text-gray-500 mb-1">Flow</label>
             <select
               className="w-full border border-gray-300 rounded px-2 py-1 flex-1 text-sm"
-              value={eventFlowId}
+              value={effectiveFlowId}
               onChange={(e) => setEventFlowId(e.target.value)}
             >
               {flows.length === 0 && <option value="" disabled>No flows available</option>}
