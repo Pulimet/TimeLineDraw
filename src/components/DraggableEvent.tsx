@@ -71,57 +71,60 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
       
       if (dragMode === 'move') {
         const duration = endMs - startMs;
-        let unclampedStart = startMs + deltaMs;
-        if (unclampedStart < 0) unclampedStart = 0;
+        const targetStart = startMs + deltaMs;
 
-        // Try to find a valid non-overlapping spot
-        let finalStart = unclampedStart;
-        const cursorCenter = unclampedStart + duration / 2;
+        // 1. Gather and merge all occupied intervals
+        const occupied = events
+          .filter(o => o.id !== evt.id)
+          .map(o => ({ start: o.startMs, end: o.endMs }))
+          .sort((a, b) => a.start - b.start);
 
-        const overlapEvent = events.find(o => 
-          o.id !== evt.id && 
-          finalStart < o.endMs && 
-          (finalStart + duration) > o.startMs
-        );
-
-        if (overlapEvent) {
-            const overlapCenter = overlapEvent.startMs + (overlapEvent.endMs - overlapEvent.startMs) / 2;
-            if (cursorCenter < overlapCenter) {
-                // attempt to snap to left side
-                finalStart = overlapEvent.startMs - duration;
+        const mergedOccupied: {start: number, end: number}[] = [];
+        for (const occ of occupied) {
+          if (mergedOccupied.length === 0) mergedOccupied.push({...occ});
+          else {
+            const last = mergedOccupied[mergedOccupied.length - 1];
+            if (occ.start <= last.end) {
+              last.end = Math.max(last.end, occ.end);
             } else {
-                // attempt to snap to right side
-                finalStart = overlapEvent.endMs;
+              mergedOccupied.push({...occ});
             }
-        }
-        
-        // One more check to see if the snapped position overlaps another event
-        // (If there isn't enough room, we revert to the nearest valid bound)
-        const secondaryOverlap = events.find(o => 
-          o.id !== evt.id && 
-          finalStart < o.endMs && 
-          (finalStart + duration) > o.startMs
-        );
-
-        if (secondaryOverlap) {
-            // Revert back to proper boundaries from startMs
-            let minS = 0;
-            let maxE = Infinity;
-            events.forEach(other => {
-              if (other.id === evt.id) return;
-              if (other.endMs <= startMs) minS = Math.max(minS, other.endMs);
-              if (other.startMs >= endMs) maxE = Math.min(maxE, other.startMs);
-            });
-            if (unclampedStart < startMs) finalStart = minS;
-            else finalStart = maxE - duration;
+          }
         }
 
-        if (finalStart < 0) finalStart = 0;
-        
-        // Ensure integer boundaries
-        finalStart = Math.round(finalStart);
-        
-        setDragOffsetMs(finalStart - startMs);
+        // 2. Find all valid gaps between occupied intervals that can fit this event
+        const validGaps: {L: number, R: number}[] = [];
+        let currentL = 0;
+        for (const occ of mergedOccupied) {
+          if (occ.start - currentL >= duration) {
+            validGaps.push({ L: currentL, R: occ.start });
+          }
+          currentL = occ.end;
+        }
+        validGaps.push({ L: currentL, R: Infinity });
+
+        // 3. Find the closest valid start position
+        let bestStart = targetStart;
+        let minDistance = Infinity;
+
+        for (const gap of validGaps) {
+          const minS = gap.L;
+          const maxS = gap.R - duration;
+          if (minS > maxS) continue;
+
+          let clamped = targetStart;
+          if (clamped < minS) clamped = minS;
+          if (clamped > maxS) clamped = maxS;
+
+          const dist = Math.abs(targetStart - clamped);
+          if (dist < minDistance) {
+            minDistance = dist;
+            bestStart = clamped;
+          }
+        }
+
+        if (bestStart < 0) bestStart = 0;
+        setDragOffsetMs(Math.round(bestStart) - startMs);
 
       } else if (dragMode === 'resize-left') {
         let minS = 0;
@@ -198,6 +201,11 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
       style={getEventStyle(currentStart, currentEnd)}
       title={`${evt.title} (${Math.round(currentStart)} - ${Math.round(currentEnd)})`}
     >
+      {/* Duration (Top Left Corner) */}
+      <span className="absolute top-0 left-0 text-[9px] text-black/60 bg-black/5 px-1 rounded-br-sm z-10 pointer-events-none">
+        {Math.round(currentEnd - currentStart)}ms
+      </span>
+
       {/* Delete Button (Top Right Inside) */}
       <button
         onClick={() => removeEvent(evt.id)}
