@@ -194,16 +194,25 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
     <div
       ref={containerRef}
       onPointerDown={(e) => handlePointerDown(e, 'move')}
-      className={`absolute top-1 bottom-1 flex items-center justify-center px-6 rounded-sm text-black text-xs font-medium shadow-sm border border-black/10 group/event transition-shadow ${dragMode ? 'shadow-md opacity-90 scale-100 touch-none' : ''}`}
+      className={`absolute top-1 bottom-1 flex items-center justify-center px-4 rounded-sm text-black text-xs font-medium shadow-sm border border-black/10 group/event transition-shadow ${dragMode ? 'shadow-md opacity-90 scale-100 touch-none' : ''}`}
       style={getEventStyle(currentStart, currentEnd)}
       title={`${evt.title} (${Math.round(currentStart)} - ${Math.round(currentEnd)})`}
     >
-      {/* Left Resize Handle */}
+      {/* Delete Button (Top Right Inside) */}
+      <button
+        onClick={() => removeEvent(evt.id)}
+        className="delete-btn absolute top-0 right-0 text-black/50 hover:text-red-600 opacity-0 group-hover/event:opacity-100 transition-opacity p-[3px] cursor-pointer z-30"
+        title="Delete Event"
+      >
+        <X size={12} />
+      </button>
+
+      {/* Left Resize Handle (Bottom Left Corner) */}
       <div 
-        className="absolute left-0 top-0 bottom-0 w-4 cursor-ew-resize hover:bg-black/10 z-20 flex items-center justify-center opacity-0 group-hover/event:opacity-100"
+        className="absolute left-0 bottom-0 w-4 h-4 cursor-ew-resize hover:bg-black/10 z-20 flex items-end justify-start opacity-0 group-hover/event:opacity-100 rounded-bl-sm"
         onPointerDown={(e) => handlePointerDown(e, 'resize-left')}
       >
-         <div className="w-0.5 h-1/2 bg-black/30 rounded-full" />
+         <div className="w-1.5 h-1.5 border-l-2 border-b-2 border-black/40 mb-[3px] ml-[3px]" />
       </div>
 
       <span className="truncate select-none pointer-events-none overflow-hidden text-center z-10 w-full px-1">
@@ -217,21 +226,13 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
         </span>
       )}
 
-      {/* Right Resize Handle */}
+      {/* Right Resize Handle (Bottom Right Corner) */}
       <div 
-        className="absolute right-0 top-0 bottom-0 w-4 cursor-ew-resize hover:bg-black/10 z-20 flex items-center justify-center opacity-0 group-hover/event:opacity-100"
+        className="absolute right-0 bottom-0 w-4 h-4 cursor-ew-resize hover:bg-black/10 z-20 flex items-end justify-end opacity-0 group-hover/event:opacity-100 rounded-br-sm"
         onPointerDown={(e) => handlePointerDown(e, 'resize-right')}
       >
-        <div className="w-0.5 h-1/2 bg-black/30 rounded-full" />
+        <div className="w-1.5 h-1.5 border-r-2 border-b-2 border-black/40 mb-[3px] mr-[3px]" />
       </div>
-
-      <button
-        onClick={() => removeEvent(evt.id)}
-        className="delete-btn absolute top-0 -right-5 ml-1 text-black/50 hover:text-red-600 opacity-0 group-hover/event:opacity-100 transition-opacity p-0.5 cursor-pointer"
-        title="Delete Event"
-      >
-        <X size={14} />
-      </button>
     </div>
   );
 };
