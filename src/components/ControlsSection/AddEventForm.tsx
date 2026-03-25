@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTimelineStore } from '../../store/timelineStore';
-import { PREDEFINED_COLORS } from './ColorPicker';
+import { PREDEFINED_COLORS } from '../../constants/colors';
 
 export const AddEventForm: React.FC = () => {
   const { flows, addEvent } = useTimelineStore();

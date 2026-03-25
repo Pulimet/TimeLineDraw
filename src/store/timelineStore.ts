@@ -7,6 +7,8 @@ import { hasOverlap } from '../utils/overlap';
 interface TimelineState {
   flows: Flow[];
   events: TimelineEvent[];
+  maxDuration: number;
+  zoom: number;
   addFlow: (title: string) => void;
   removeFlow: (id: string) => void;
   updateFlowTitle: (id: string, title: string) => void;
@@ -14,6 +16,8 @@ interface TimelineState {
   addEvent: (event: Omit<TimelineEvent, 'id'>) => boolean;
   updateEvent: (id: string, event: Partial<TimelineEvent>) => boolean;
   removeEvent: (id: string) => void;
+  setMaxDuration: (duration: number) => void;
+  setZoom: (zoom: number) => void;
 }
 
 export const useTimelineStore = create<TimelineState>()(
@@ -21,6 +25,11 @@ export const useTimelineStore = create<TimelineState>()(
     (set) => ({
       flows: [],
       events: [],
+      maxDuration: 10000,
+      zoom: 1,
+
+      setMaxDuration: (maxDuration) => set({ maxDuration }),
+      setZoom: (zoom) => set({ zoom }),
 
       addFlow: (title) =>
         set((state) => ({
