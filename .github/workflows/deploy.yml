@@ -33,7 +33,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "npm"
+
+      - name: Clean internal registry traces
+        run: |
+          rm -f .npmrc
+          rm -f package-lock.json
 
       - name: Install dependencies
         run: npm install
