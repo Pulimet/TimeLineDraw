@@ -12,6 +12,22 @@ dist
 dist-ssr
 *.local
 
+# Env files
+.env
+.env.*
+!.env.example
+
+# Test and coverage output
+coverage
+*.lcov
+
+# Build and tool caches
+.cache
+.parcel-cache
+.turbo
+.eslintcache
+*.tsbuildinfo
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -22,3 +38,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*~
+Thumbs.db
