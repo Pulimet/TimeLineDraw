@@ -1,73 +1,113 @@
-# React + TypeScript + Vite
+# TimeLineDraw
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interactive timeline editor built with React + TypeScript.
 
-Currently, two official plugins are available:
+## What it does
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Create and reorder **flows** (rows)
+- Add, move, resize, and delete **events** in each flow
+- Prevent overlapping events inside the same flow
+- Configure timeline max duration and zoom scale
+- Export/import timeline JSON data
+- Persist timeline state in `localStorage`
 
-## React Compiler
+## Tech stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19 + TypeScript
+- Vite
+- Tailwind CSS
+- Zustand (`persist` middleware)
+- `@dnd-kit` for drag and sort interactions
 
-## Expanding the ESLint configuration
+## Project structure
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- `src/store/timelineStore.ts` - global state/actions and persistence
+- `src/types/timeline.ts` - core data types (`Flow`, `TimelineEvent`)
+- `src/components/` - UI components (controls, timeline, rows, events)
+- `src/hooks/useDraggableEvent.ts` - event drag/resize behavior
+- `src/utils/` - overlap and drag math helpers
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Data model
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+All timeline positioning uses milliseconds:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- `startMs`: event start time in ms
+- `endMs`: event end time in ms
+
+```ts
+interface TimelineEvent {
+  id: string;
+  flowId: string;
+  title: string;
+  startMs: number;
+  endMs: number;
+  color: string;
+}
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Prerequisites
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js 18+
+- npm
+
+### Install
+
+```bash
+npm install
+```
+
+### Run dev server
+
+```bash
+npm run dev
+```
+
+Open the URL shown by Vite (typically `http://localhost:5173`).
+
+## Available scripts
+
+```bash
+npm run dev      # start local dev server
+npm run build    # type-check and build production assets
+npm run preview  # preview production build locally
+npm run lint     # run ESLint
+```
+
+## Usage
+
+1. Add a flow.
+2. Add an event to a flow using `startMs` / `endMs`.
+3. Drag the event body to move it.
+4. Drag left/right event handles to resize.
+5. Use Export/Import to save/load timeline JSON.
+
+## Persistence
+
+State is stored under the key `timeline-storage` in browser `localStorage`.
+
+## Build and deploy
+
+Create a production build:
+
+```bash
+npm run build
+```
+
+Output is generated in `dist/` and can be deployed to any static hosting provider.
+
+## Publish this local repo to GitHub
+
+Example using SSH alias from your setup:
+
+```bash
+git remote add origin git@github-personal:Pulimet/TimeLineDraw.git
+git push -u origin HEAD
+```
+
+If `origin` already exists, update it:
+
+```bash
+git remote set-url origin git@github-personal:Pulimet/TimeLineDraw.git
 ```
