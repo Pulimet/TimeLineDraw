@@ -5,18 +5,20 @@ Interactive timeline editor built with React + TypeScript.
 ## What it does
 
 - Create and reorder **flows** (rows)
-- Add, move, resize, and delete **events** in each flow
+- Add, move, resize, edit, and delete **events** in each flow
 - Prevent overlapping events inside the same flow
 - Configure timeline max duration and zoom scale
 - Export/import timeline JSON data
 - Persist timeline state in `localStorage`
+- Undo and redo changes
+- Clear all flows and events at once
 
 ## Tech stack
 
 - React 19 + TypeScript
 - Vite
 - Tailwind CSS
-- Zustand (`persist` middleware)
+- Zustand (`persist` middleware), along with `zundo` for Undo/Redo tracking
 - `@dnd-kit` for drag and sort interactions
 
 ## Project structure
