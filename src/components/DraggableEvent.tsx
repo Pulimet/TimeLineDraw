@@ -57,6 +57,9 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
         @container (max-width: 34px) {
           .duration-label { display: none; }
         }
+        @container (max-width: 70px) {
+          .time-range-label { display: none; }
+        }
       `}</style>
 
       {isEditing ? (
@@ -146,7 +149,7 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
         </span>
       )}
       {!isEditing && (
-        <span className="absolute bottom-0 select-none pointer-events-none text-center z-10 w-full px-1 text-[7px] opacity-75 pb-[2px] whitespace-nowrap overflow-hidden text-ellipsis">
+        <span className="time-range-label absolute bottom-0 select-none pointer-events-none text-center z-10 w-full px-1 text-[7px] opacity-75 pb-[2px] whitespace-nowrap overflow-hidden text-ellipsis">
           {Math.round(currentStart)}ms &lt;-&gt; {Math.round(currentEnd)}ms
         </span>
       )}
