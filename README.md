@@ -88,28 +88,3 @@ npm run lint     # run ESLint
 ## Persistence
 
 State is stored under the key `timeline-storage` in browser `localStorage`.
-
-## Build and deploy
-
-Create a production build:
-
-```bash
-npm run build
-```
-
-Output is generated in `dist/` and can be deployed to any static hosting provider.
-
-## Publish this local repo to GitHub
-
-Example using SSH alias from your setup:
-
-```bash
-git remote add origin git@github-personal:Pulimet/TimeLineDraw.git
-git push -u origin HEAD
-```
-
-If `origin` already exists, update it:
-
-```bash
-git remote set-url origin git@github-personal:Pulimet/TimeLineDraw.git
-```
