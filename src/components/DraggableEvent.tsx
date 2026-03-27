@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { X } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { X, Edit2, Check } from 'lucide-react';
 import type { TimelineEvent } from '../types/timeline';
 import { useTimelineStore } from '../store/timelineStore';
 import { useDraggableEvent } from '../hooks/useDraggableEvent';
@@ -11,8 +11,12 @@ interface DraggableEventProps {
 }
 
 export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime, events }) => {
-  const { removeEvent } = useTimelineStore();
+  const { removeEvent, updateEvent } = useTimelineStore();
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  const [isEditing, setIsEditing] = useState(false);
+  const [editStart, setEditStart] = useState(evt.startMs);
+  const [editEnd, setEditEnd] = useState(evt.endMs);
 
   const {
     dragMode,
@@ -29,14 +33,22 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
       width: `${Math.max(widthPercent, 0.5)}%`,
       backgroundColor: evt.color || '#3b82f6',
       cursor: dragMode === 'move' ? 'grabbing' : 'grab',
-      zIndex: dragMode ? 10 : 1,
+      zIndex: dragMode || isEditing ? 10 : 1,
     };
+  };
+
+  const handleSave = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    updateEvent(evt.id, { startMs: editStart, endMs: editEnd });
+    setIsEditing(false);
   };
 
   return (
     <div
       ref={containerRef}
-      onPointerDown={(e) => handlePointerDown(e, 'move')}
+      onPointerDown={(e) => {
+        if (!isEditing) handlePointerDown(e, 'move');
+      }}
       className={`absolute top-1 bottom-1 flex flex-col items-center justify-center px-1 rounded-sm text-black text-xs font-medium shadow-sm border border-black/10 group/event transition-shadow ${dragMode ? 'shadow-md opacity-90 scale-100 touch-none' : ''}`}
       style={{ ...getEventStyle(currentStart, currentEnd), containerType: 'inline-size' }}
       title={`${evt.title} (${Math.round(currentStart)}ms - ${Math.round(currentEnd)}ms) | Duration: ${Math.round(currentEnd - currentStart)}ms`}
@@ -46,31 +58,93 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
           .event-time-labels { display: none; }
         }
       `}</style>
-      <span className="event-time-labels absolute top-0 left-0 text-[9px] text-black/60 bg-black/5 px-1 rounded-br-sm z-10 pointer-events-none">
-        {Math.round(currentEnd - currentStart)}ms
-      </span>
+      
+      {isEditing ? (
+        <div 
+          className="absolute inset-0 bg-white/95 z-40 flex flex-col items-center justify-center p-1 rounded-sm gap-1 cursor-default" 
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <div className="flex gap-1 w-full justify-center items-center">
+            <input 
+              type="number" 
+              value={Math.round(editStart)} 
+              onChange={e => setEditStart(Number(e.target.value))}
+              className="w-10 text-[10px] p-0.5 border border-gray-300 rounded text-center focus:outline-none focus:border-blue-500"
+            />
+            <span className="text-[10px] text-gray-500">-</span>
+            <input 
+              type="number" 
+              value={Math.round(editEnd)} 
+              onChange={e => setEditEnd(Number(e.target.value))}
+              className="w-10 text-[10px] p-0.5 border border-gray-300 rounded text-center focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <div className="flex gap-1">
+            <button 
+              onClick={handleSave} 
+              className="bg-blue-500 hover:bg-blue-600 text-white p-0.5 rounded px-2 text-[10px] flex items-center justify-center transition-colors"
+            >
+              <Check size={10} className="mr-0.5"/> Save
+            </button>
+            <button 
+              onClick={(e) => { e.stopPropagation(); setIsEditing(false); }} 
+              className="bg-gray-200 hover:bg-gray-300 text-gray-700 p-0.5 rounded px-2 text-[10px] flex items-center justify-center transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : null}
 
-      <button
-        onClick={() => removeEvent(evt.id)}
-        className="delete-btn absolute top-0 right-0 text-black/50 hover:text-red-600 opacity-0 group-hover/event:opacity-100 transition-opacity p-[3px] cursor-pointer z-30"
-        title="Delete Event"
-      >
-        <X size={12} />
-      </button>
+      {!isEditing && (
+        <>
+          <span className="event-time-labels absolute top-0 left-0 text-[9px] text-black/60 bg-black/5 px-1 rounded-br-sm z-10 pointer-events-none">
+            {Math.round(currentEnd - currentStart)}ms
+          </span>
 
-      <div 
-        className="absolute left-0 bottom-0 w-4 h-4 cursor-ew-resize hover:bg-black/10 z-20 flex items-end justify-start opacity-0 group-hover/event:opacity-100 rounded-bl-sm"
-        onPointerDown={(e) => handlePointerDown(e, 'resize-left')}
-      >
-         <div className="w-1.5 h-1.5 border-l-2 border-b-2 border-black/40 mb-[3px] ml-[3px]" />
-      </div>
+          <div className="absolute top-0 right-0 flex z-30 opacity-0 group-hover/event:opacity-100 transition-opacity bg-black/5 rounded-bl-sm">
+            <button
+              onClick={(e) => { 
+                e.stopPropagation(); 
+                setEditStart(currentStart); 
+                setEditEnd(currentEnd); 
+                setIsEditing(true); 
+              }}
+              className="p-[3px] text-black/50 hover:text-blue-600 cursor-pointer"
+              title="Edit Time"
+            >
+              <Edit2 size={12} />
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); removeEvent(evt.id); }}
+              className="delete-btn p-[3px] text-black/50 hover:text-red-600 cursor-pointer"
+              title="Delete Event"
+            >
+              <X size={12} />
+            </button>
+          </div>
+        </>
+      )}
 
-      <span className="truncate select-none pointer-events-none overflow-hidden text-center z-10 w-full px-1 leading-tight">
-        {evt.title}
-      </span>
-      <span className="event-time-labels absolute bottom-0 select-none pointer-events-none text-center z-10 w-full px-1 text-[7px] opacity-75 pb-[2px] whitespace-nowrap overflow-hidden text-ellipsis">
-        {Math.round(currentStart)}ms &lt;-&gt; {Math.round(currentEnd)}ms
-      </span>
+      {!isEditing && (
+        <div 
+          className="absolute left-0 bottom-0 w-4 h-4 cursor-ew-resize hover:bg-black/10 z-20 flex items-end justify-start opacity-0 group-hover/event:opacity-100 rounded-bl-sm"
+          onPointerDown={(e) => handlePointerDown(e, 'resize-left')}
+        >
+           <div className="w-1.5 h-1.5 border-l-2 border-b-2 border-black/40 mb-[3px] ml-[3px]" />
+        </div>
+      )}
+
+      {!isEditing && (
+        <span className="truncate select-none pointer-events-none overflow-hidden text-center z-10 w-full px-1 leading-tight">
+          {evt.title}
+        </span>
+      )}
+      {!isEditing && (
+        <span className="event-time-labels absolute bottom-0 select-none pointer-events-none text-center z-10 w-full px-1 text-[7px] opacity-75 pb-[2px] whitespace-nowrap overflow-hidden text-ellipsis">
+          {Math.round(currentStart)}ms &lt;-&gt; {Math.round(currentEnd)}ms
+        </span>
+      )}
       
       {dragMode && (
         <span className="absolute -top-6 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[10px] px-2 py-0.5 rounded whitespace-nowrap z-50 pointer-events-none">
@@ -78,12 +152,14 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
         </span>
       )}
 
-      <div 
-        className="absolute right-0 bottom-0 w-4 h-4 cursor-ew-resize hover:bg-black/10 z-20 flex items-end justify-end opacity-0 group-hover/event:opacity-100 rounded-br-sm"
-        onPointerDown={(e) => handlePointerDown(e, 'resize-right')}
-      >
-        <div className="w-1.5 h-1.5 border-r-2 border-b-2 border-black/40 mb-[3px] mr-[3px]" />
-      </div>
+      {!isEditing && (
+        <div 
+          className="absolute right-0 bottom-0 w-4 h-4 cursor-ew-resize hover:bg-black/10 z-20 flex items-end justify-end opacity-0 group-hover/event:opacity-100 rounded-br-sm"
+          onPointerDown={(e) => handlePointerDown(e, 'resize-right')}
+        >
+          <div className="w-1.5 h-1.5 border-r-2 border-b-2 border-black/40 mb-[3px] mr-[3px]" />
+        </div>
+      )}
     </div>
   );
 };
