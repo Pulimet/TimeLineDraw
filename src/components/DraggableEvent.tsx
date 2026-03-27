@@ -13,7 +13,7 @@ interface DraggableEventProps {
 export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime, events }) => {
   const { removeEvent, updateEvent } = useTimelineStore();
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   const [isEditing, setIsEditing] = useState(false);
   const [editStart, setEditStart] = useState(evt.startMs);
   const [editEnd, setEditEnd] = useState(evt.endMs);
@@ -54,40 +54,40 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
       title={`${evt.title} (${Math.round(currentStart)}ms - ${Math.round(currentEnd)}ms) | Duration: ${Math.round(currentEnd - currentStart)}ms`}
     >
       <style>{`
-        @container (max-width: 85px) {
-          .event-time-labels { display: none; }
+        @container (max-width: 34px) {
+          .duration-label { display: none; }
         }
       `}</style>
-      
+
       {isEditing ? (
-        <div 
-          className="absolute inset-0 bg-white/95 z-40 flex flex-col items-center justify-center p-2 rounded-sm gap-2 cursor-default min-h-[60px]" 
+        <div
+          className="absolute inset-0 bg-white/95 z-40 flex flex-col items-center justify-center p-2 rounded-sm gap-2 cursor-default min-h-[60px]"
           onPointerDown={(e) => e.stopPropagation()}
         >
           <div className="flex gap-2 w-full justify-center items-center">
-            <input 
-              type="number" 
-              value={Math.round(editStart)} 
+            <input
+              type="number"
+              value={Math.round(editStart)}
               onChange={e => setEditStart(Number(e.target.value))}
               className="w-16 text-xs p-1 border border-gray-300 rounded text-center focus:outline-none focus:border-blue-500"
             />
             <span className="text-xs text-gray-500">-</span>
-            <input 
-              type="number" 
-              value={Math.round(editEnd)} 
+            <input
+              type="number"
+              value={Math.round(editEnd)}
               onChange={e => setEditEnd(Number(e.target.value))}
               className="w-16 text-xs p-1 border border-gray-300 rounded text-center focus:outline-none focus:border-blue-500"
             />
           </div>
           <div className="flex gap-2">
-            <button 
-              onClick={handleSave} 
+            <button
+              onClick={handleSave}
               className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded text-xs flex items-center justify-center transition-colors"
             >
               <Check size={12} className="mr-1"/> Save
             </button>
-            <button 
-              onClick={(e) => { e.stopPropagation(); setIsEditing(false); }} 
+            <button
+              onClick={(e) => { e.stopPropagation(); setIsEditing(false); }}
               className="bg-gray-200 hover:bg-gray-300 text-gray-700 py-1 px-3 rounded text-xs flex items-center justify-center transition-colors"
             >
               Cancel
@@ -98,17 +98,17 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
 
       {!isEditing && (
         <>
-          <span className="event-time-labels absolute top-0 left-0 text-[9px] text-black/60 bg-black/5 px-1 rounded-br-sm z-10 pointer-events-none">
+          <span className="duration-label absolute top-0 left-0 text-[9px] text-black/60 bg-black/5 px-1 rounded-br-sm z-10 pointer-events-none">
             {Math.round(currentEnd - currentStart)}ms
           </span>
 
           <div className="absolute top-0 right-0 flex z-30 opacity-0 group-hover/event:opacity-100 transition-opacity bg-black/5 rounded-bl-sm">
             <button
-              onClick={(e) => { 
-                e.stopPropagation(); 
-                setEditStart(currentStart); 
-                setEditEnd(currentEnd); 
-                setIsEditing(true); 
+              onClick={(e) => {
+                e.stopPropagation();
+                setEditStart(currentStart);
+                setEditEnd(currentEnd);
+                setIsEditing(true);
               }}
               className="p-[3px] text-black/50 hover:text-blue-600 cursor-pointer"
               title="Edit Time"
@@ -116,10 +116,10 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
               <Edit2 size={12} />
             </button>
             <button
-              onClick={(e) => { 
-                e.stopPropagation(); 
+              onClick={(e) => {
+                e.stopPropagation();
                 if (window.confirm('Are you sure you want to delete this event?')) {
-                  removeEvent(evt.id); 
+                  removeEvent(evt.id);
                 }
               }}
               className="delete-btn p-[3px] text-black/50 hover:text-red-600 cursor-pointer"
@@ -132,7 +132,7 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
       )}
 
       {!isEditing && (
-        <div 
+        <div
           className="absolute left-0 bottom-0 w-4 h-4 cursor-ew-resize hover:bg-black/10 z-20 flex items-end justify-start opacity-0 group-hover/event:opacity-100 rounded-bl-sm"
           onPointerDown={(e) => handlePointerDown(e, 'resize-left')}
         >
@@ -146,11 +146,11 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
         </span>
       )}
       {!isEditing && (
-        <span className="event-time-labels absolute bottom-0 select-none pointer-events-none text-center z-10 w-full px-1 text-[7px] opacity-75 pb-[2px] whitespace-nowrap overflow-hidden text-ellipsis">
+        <span className="absolute bottom-0 select-none pointer-events-none text-center z-10 w-full px-1 text-[7px] opacity-75 pb-[2px] whitespace-nowrap overflow-hidden text-ellipsis">
           {Math.round(currentStart)}ms &lt;-&gt; {Math.round(currentEnd)}ms
         </span>
       )}
-      
+
       {dragMode && (
         <span className="absolute -top-6 left-1/2 -translate-x-1/2 bg-black/80 text-white text-[10px] px-2 py-0.5 rounded whitespace-nowrap z-50 pointer-events-none">
           {Math.round(currentStart)} - {Math.round(currentEnd)}
@@ -158,7 +158,7 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
       )}
 
       {!isEditing && (
-        <div 
+        <div
           className="absolute right-0 bottom-0 w-4 h-4 cursor-ew-resize hover:bg-black/10 z-20 flex items-end justify-end opacity-0 group-hover/event:opacity-100 rounded-br-sm"
           onPointerDown={(e) => handlePointerDown(e, 'resize-right')}
         >
