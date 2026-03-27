@@ -61,34 +61,34 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
       
       {isEditing ? (
         <div 
-          className="absolute inset-0 bg-white/95 z-40 flex flex-col items-center justify-center p-1 rounded-sm gap-1 cursor-default" 
+          className="absolute inset-0 bg-white/95 z-40 flex flex-col items-center justify-center p-2 rounded-sm gap-2 cursor-default min-h-[60px]" 
           onPointerDown={(e) => e.stopPropagation()}
         >
-          <div className="flex gap-1 w-full justify-center items-center">
+          <div className="flex gap-2 w-full justify-center items-center">
             <input 
               type="number" 
               value={Math.round(editStart)} 
               onChange={e => setEditStart(Number(e.target.value))}
-              className="w-10 text-[10px] p-0.5 border border-gray-300 rounded text-center focus:outline-none focus:border-blue-500"
+              className="w-16 text-xs p-1 border border-gray-300 rounded text-center focus:outline-none focus:border-blue-500"
             />
-            <span className="text-[10px] text-gray-500">-</span>
+            <span className="text-xs text-gray-500">-</span>
             <input 
               type="number" 
               value={Math.round(editEnd)} 
               onChange={e => setEditEnd(Number(e.target.value))}
-              className="w-10 text-[10px] p-0.5 border border-gray-300 rounded text-center focus:outline-none focus:border-blue-500"
+              className="w-16 text-xs p-1 border border-gray-300 rounded text-center focus:outline-none focus:border-blue-500"
             />
           </div>
-          <div className="flex gap-1">
+          <div className="flex gap-2">
             <button 
               onClick={handleSave} 
-              className="bg-blue-500 hover:bg-blue-600 text-white p-0.5 rounded px-2 text-[10px] flex items-center justify-center transition-colors"
+              className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded text-xs flex items-center justify-center transition-colors"
             >
-              <Check size={10} className="mr-0.5"/> Save
+              <Check size={12} className="mr-1"/> Save
             </button>
             <button 
               onClick={(e) => { e.stopPropagation(); setIsEditing(false); }} 
-              className="bg-gray-200 hover:bg-gray-300 text-gray-700 p-0.5 rounded px-2 text-[10px] flex items-center justify-center transition-colors"
+              className="bg-gray-200 hover:bg-gray-300 text-gray-700 py-1 px-3 rounded text-xs flex items-center justify-center transition-colors"
             >
               Cancel
             </button>
