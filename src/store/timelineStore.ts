@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { temporal } from 'zundo';
 import { v4 as uuidv4 } from 'uuid';
 import type { Flow, TimelineEvent } from '../types/timeline';
 import { hasOverlap } from '../utils/overlap';
@@ -22,82 +23,92 @@ interface TimelineState {
 }
 
 export const useTimelineStore = create<TimelineState>()(
-  persist(
-    (set) => ({
-      flows: [],
-      events: [],
-      maxDuration: 10000,
-      zoom: 1,
+  temporal(
+    persist(
+      (set) => ({
+        flows: [],
+        events: [],
+        maxDuration: 10000,
+        zoom: 1,
 
-      setMaxDuration: (maxDuration) => set({ maxDuration }),
-      setZoom: (zoom) => set({ zoom }),
-      importData: (data) =>
-        set((state) => ({
-          ...state,
-          ...data,
-        })),
+        setMaxDuration: (maxDuration) => set({ maxDuration }),
+        setZoom: (zoom) => set({ zoom }),
+        importData: (data) =>
+          set((state) => ({
+            ...state,
+            ...data,
+          })),
 
-      addFlow: (title) =>
-        set((state) => ({
-          flows: [...state.flows, { id: uuidv4(), title }],
-        })),
+        addFlow: (title) =>
+          set((state) => ({
+            flows: [...state.flows, { id: uuidv4(), title }],
+          })),
 
-      removeFlow: (id) =>
-        set((state) => ({
-          flows: state.flows.filter((f) => f.id !== id),
-          events: state.events.filter((e) => e.flowId !== id),
-        })),
+        removeFlow: (id) =>
+          set((state) => ({
+            flows: state.flows.filter((f) => f.id !== id),
+            events: state.events.filter((e) => e.flowId !== id),
+          })),
 
-      updateFlowTitle: (id, title) =>
-        set((state) => ({
-          flows: state.flows.map((f) => (f.id === id ? { ...f, title } : f)),
-        })),
+        updateFlowTitle: (id, title) =>
+          set((state) => ({
+            flows: state.flows.map((f) => (f.id === id ? { ...f, title } : f)),
+          })),
 
-      reorderFlows: (flows) => set({ flows }),
+        reorderFlows: (flows) => set({ flows }),
 
-      addEvent: (event) => {
-        let added = false;
-        set((state) => {
-          if (hasOverlap(state.events, event.flowId, event.startMs, event.endMs)) {
-            added = false;
-            return state; // No change
-          }
-          added = true;
-          return {
-            events: [...state.events, { ...event, id: uuidv4() }],
-          };
-        });
-        return added;
-      },
+        addEvent: (event) => {
+          let added = false;
+          set((state) => {
+            if (hasOverlap(state.events, event.flowId, event.startMs, event.endMs)) {
+              added = false;
+              return state; // No change
+            }
+            added = true;
+            return {
+              events: [...state.events, { ...event, id: uuidv4() }],
+            };
+          });
+          return added;
+        },
 
-      updateEvent: (id, updatedFields) => {
-        let updated = false;
-        set((state) => {
-          const currentEvent = state.events.find(e => e.id === id);
-          if (!currentEvent) {
-            updated = false;
-            return state;
-          }
-          const merged = { ...currentEvent, ...updatedFields };
-          if (hasOverlap(state.events, merged.flowId, merged.startMs, merged.endMs, id)) {
-            updated = false;
-            return state; // Overlap, do not apply
-          }
-          updated = true;
-          return {
-            events: state.events.map((e) => (e.id === id ? merged : e)),
-          };
-        });
-        return updated;
-      },
+        updateEvent: (id, updatedFields) => {
+          let updated = false;
+          set((state) => {
+            const currentEvent = state.events.find(e => e.id === id);
+            if (!currentEvent) {
+              updated = false;
+              return state;
+            }
+            const merged = { ...currentEvent, ...updatedFields };
+            if (hasOverlap(state.events, merged.flowId, merged.startMs, merged.endMs, id)) {
+              updated = false;
+              return state; // Overlap, do not apply
+            }
+            updated = true;
+            return {
+              events: state.events.map((e) => (e.id === id ? merged : e)),
+            };
+          });
+          return updated;
+        },
 
-      removeEvent: (id) =>
-        set((state) => ({
-          events: state.events.filter((e) => e.id !== id),
-        })),
-    }),
+        removeEvent: (id) =>
+          set((state) => ({
+            events: state.events.filter((e) => e.id !== id),
+          })),
+      }),
+      {
+        name: 'timeline-storage',
+      }
+    ),
     {
-      name: 'timeline-storage',
+      partialize: (state) => ({
+        flows: state.flows,
+        events: state.events,
+        maxDuration: state.maxDuration,
+        zoom: state.zoom,
+      }),
     }
   )
 );
