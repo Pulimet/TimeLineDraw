@@ -116,7 +116,12 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
               <Edit2 size={12} />
             </button>
             <button
-              onClick={(e) => { e.stopPropagation(); removeEvent(evt.id); }}
+              onClick={(e) => { 
+                e.stopPropagation(); 
+                if (window.confirm('Are you sure you want to delete this event?')) {
+                  removeEvent(evt.id); 
+                }
+              }}
               className="delete-btn p-[3px] text-black/50 hover:text-red-600 cursor-pointer"
               title="Delete Event"
             >
