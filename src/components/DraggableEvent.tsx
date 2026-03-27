@@ -37,11 +37,16 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
     <div
       ref={containerRef}
       onPointerDown={(e) => handlePointerDown(e, 'move')}
-      className={`absolute top-1 bottom-1 flex items-center justify-center px-1 rounded-sm text-black text-xs font-medium shadow-sm border border-black/10 group/event transition-shadow ${dragMode ? 'shadow-md opacity-90 scale-100 touch-none' : ''}`}
-      style={getEventStyle(currentStart, currentEnd)}
-      title={`${evt.title} (${Math.round(currentStart)} - ${Math.round(currentEnd)})`}
+      className={`absolute top-1 bottom-1 flex flex-col items-center justify-center px-1 rounded-sm text-black text-xs font-medium shadow-sm border border-black/10 group/event transition-shadow ${dragMode ? 'shadow-md opacity-90 scale-100 touch-none' : ''}`}
+      style={{ ...getEventStyle(currentStart, currentEnd), containerType: 'inline-size' }}
+      title={`${evt.title} (${Math.round(currentStart)}ms - ${Math.round(currentEnd)}ms) | Duration: ${Math.round(currentEnd - currentStart)}ms`}
     >
-      <span className="absolute top-0 left-0 text-[9px] text-black/60 bg-black/5 px-1 rounded-br-sm z-10 pointer-events-none">
+      <style>{`
+        @container (max-width: 85px) {
+          .event-time-labels { display: none; }
+        }
+      `}</style>
+      <span className="event-time-labels absolute top-0 left-0 text-[9px] text-black/60 bg-black/5 px-1 rounded-br-sm z-10 pointer-events-none">
         {Math.round(currentEnd - currentStart)}ms
       </span>
 
@@ -60,8 +65,11 @@ export const DraggableEvent: React.FC<DraggableEventProps> = ({ evt, maxEndTime,
          <div className="w-1.5 h-1.5 border-l-2 border-b-2 border-black/40 mb-[3px] ml-[3px]" />
       </div>
 
-      <span className="truncate select-none pointer-events-none overflow-hidden text-center z-10 w-full px-1">
+      <span className="truncate select-none pointer-events-none overflow-hidden text-center z-10 w-full px-1 leading-tight">
         {evt.title}
+      </span>
+      <span className="event-time-labels absolute bottom-0 select-none pointer-events-none text-center z-10 w-full px-1 text-[7px] opacity-75 pb-[2px] whitespace-nowrap overflow-hidden text-ellipsis">
+        {Math.round(currentStart)}ms &lt;-&gt; {Math.round(currentEnd)}ms
       </span>
       
       {dragMode && (
