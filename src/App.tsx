@@ -3,6 +3,7 @@ import { Controls } from './components/Controls';
 import { TimelineSettings } from './components/ControlsSection/TimelineSettings';
 import { DataExportImport } from './components/ControlsSection/DataExportImport';
 import { UndoRedoControls } from './components/ControlsSection/UndoRedoControls';
+import { ClearAllButton } from './components/ControlsSection/ClearAllButton';
 import { AppTitle } from './components/AppTitle';
 import './index.css';
 
@@ -15,7 +16,10 @@ function App() {
           <div className="flex gap-4 items-end">
             <TimelineSettings />
             <UndoRedoControls />
-            <DataExportImport />
+            <div className="flex items-center">
+              <DataExportImport />
+              <ClearAllButton />
+            </div>
           </div>
         </header>
 

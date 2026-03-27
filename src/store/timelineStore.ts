@@ -20,6 +20,7 @@ interface TimelineState {
   setMaxDuration: (duration: number) => void;
   setZoom: (zoom: number) => void;
   importData: (data: Partial<TimelineState>) => void;
+  clearAll: () => void;
 }
 
 export const useTimelineStore = create<TimelineState>()(
@@ -38,6 +39,8 @@ export const useTimelineStore = create<TimelineState>()(
             ...state,
             ...data,
           })),
+          
+        clearAll: () => set({ flows: [], events: [] }),
 
         addFlow: (title) =>
           set((state) => ({
