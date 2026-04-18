@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Event Duplication**: Added a 'Duplicate' button when hovering over events that seamlessly clones the event and places it sequentially into the earliest non-overlapping slot.
 - **Cross-Flow Drag**: Allowed dragging and dropping events vertically between different flows seamlessly.
 - **Undo/Redo**: Integrated `zundo` for state management and created `UndoRedoControls` component.
 - **Clear All**: Added functionality and button to clear all flows and events at once.
@@ -22,6 +23,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **Color Selection Popover UI**: Transformed the static color palette into a dynamic, expandable modal picker to conserve space and enhance the interface flow.
+- **Event Edit UI**: Rewrote the inline editing form to sit atop a crisp, shadowed border background, ensuring maximal legibility against multiple underlying flows.
 - **Color Selection UI**: Replaced native color inputs with robust inline color swatches and expanded predefined palette to 24 colors.
 - **Responsive Design**: Enhanced `DraggableEvent` display by adding inline-size container type, improving duration title, and adjusting time label visibility, including hiding time range labels on smaller screens.
 - **UI Improvements**: Refactored the `DraggableEvent` component, improving input sizes, button styles, and the styling for the duration label.

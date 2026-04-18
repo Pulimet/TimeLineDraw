@@ -117,17 +117,22 @@ export const AddEventForm: React.FC = () => {
               setEventEndMs(Number(e.target.value.replace(/\D/g, '')))
             } />
         </div>
-        <div className="col-span-1 flex items-end justify-end">
+        <div className="col-span-1 flex items-end justify-between gap-2">
+          <div className="flex-1">
+            <label className="block text-xs text-gray-500 mb-1">
+              Color
+            </label>
+            <ColorPicker eventColor={eventColor} setEventColor={setEventColor} className="h-[30px] w-full" />
+          </div>
           <button type="submit"
             disabled={!eventTitle || eventEndMs <= eventStartMs}
             className="bg-green-600 hover:bg-green-700 text-white
-              px-3 py-1.5 rounded text-sm font-medium
+              px-3 h-[30px] flex items-center justify-center rounded text-sm font-medium
               disabled:opacity-50">
             Add
           </button>
         </div>
       </div>
-      <ColorPicker eventColor={eventColor} setEventColor={setEventColor} />
     </form>
   );
 };

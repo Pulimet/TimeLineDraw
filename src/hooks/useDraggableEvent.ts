@@ -14,7 +14,7 @@ interface UseDraggableEventProps {
 }
 
 export function useDraggableEvent({ evt, maxEndTime, events, containerRef }: UseDraggableEventProps) {
-  const { updateEvent } = useTimelineStore();
+  const { updateEvent, events: allEvents } = useTimelineStore();
   const [dragMode, setDragMode] = useState<DragMode>(null);
   const [dragOffsetMs, setDragOffsetMs] = useState(0);
   const [dragOffsetY, setDragOffsetY] = useState(0);
@@ -59,8 +59,18 @@ export function useDraggableEvent({ evt, maxEndTime, events, containerRef }: Use
       if (dragMode === 'move') {
         const duration = endMs - startMs;
         const targetStart = startMs + deltaMs;
-        // Best start is computed ONLY for the current flow (evt.flowId) which we'll use for preview.
-        const bestStart = calculateBestStart(targetStart, duration, events, evt.id);
+        
+        let targetEvents = events;
+        const elements = document.elementsFromPoint(e.clientX, e.clientY);
+        const flowContainer = elements.find(el => el.hasAttribute('data-flow-id'));
+        if (flowContainer) {
+          const newFlowId = flowContainer.getAttribute('data-flow-id');
+          if (newFlowId) {
+            targetEvents = allEvents.filter(ev => ev.flowId === newFlowId);
+          }
+        }
+        
+        const bestStart = calculateBestStart(targetStart, duration, targetEvents, evt.id);
         setDragOffsetMs(Math.round(bestStart) - startMs);
         setDragOffsetY(e.pageY - pageY);
       } else if (dragMode === 'resize-left') {
@@ -99,7 +109,7 @@ export function useDraggableEvent({ evt, maxEndTime, events, containerRef }: Use
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
     };
-  }, [dragMode, dragOffsetMs, resizeStartMs, resizeEndMs, evt, maxEndTime, events, updateEvent]);
+  }, [dragMode, dragOffsetMs, dragOffsetY, resizeStartMs, resizeEndMs, evt, maxEndTime, events, allEvents, updateEvent]);
 
   let currentStart = evt.startMs;
   let currentEnd = evt.endMs;

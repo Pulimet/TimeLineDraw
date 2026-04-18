@@ -80,10 +80,11 @@ npm run lint     # run ESLint
 ## Usage
 
 1. Add a flow.
-2. Add an event to a flow using `startMs` / `endMs`.
-3. Drag the event body to move it.
+2. Add an event to a flow using `startMs` / `endMs` or customize via the color picker popover.
+3. Drag the event body to move it horizontally or vertically across different flows.
 4. Drag left/right event handles to resize.
-5. Use Export/Import to save/load timeline JSON.
+5. Hover over an event to reveal Edit, Duplicate, and Delete tools.
+6. Use Export/Import to save/load timeline JSON.
 
 ## Persistence
 

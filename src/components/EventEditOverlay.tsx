@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Check } from 'lucide-react';
 import type { TimelineEvent } from '../types/timeline';
-import { PREDEFINED_COLORS } from '../constants/colors';
+import { ColorPicker } from './ControlsSection/ColorPicker';
 
 interface EventEditOverlayProps {
   evt: TimelineEvent;
@@ -31,10 +31,10 @@ export const EventEditOverlay: React.FC<EventEditOverlayProps> = ({
 
   return (
     <div
-      className="absolute inset-0 bg-white/95 z-40 flex flex-col
-        items-center justify-center p-2 rounded-sm gap-1
-        cursor-default min-h-[80px]"
-      style={{ minWidth: 200 }}
+      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 flex flex-col
+        items-center justify-center p-3 rounded-lg gap-2
+        cursor-default shadow-xl border border-gray-300 bg-white"
+      style={{ minWidth: 220 }}
       onPointerDown={(e) => e.stopPropagation()}
     >
       <input
@@ -63,18 +63,8 @@ export const EventEditOverlay: React.FC<EventEditOverlayProps> = ({
             focus:border-blue-500"
         />
       </div>
-      <div className="flex flex-wrap gap-1 justify-center my-1 w-full max-w-[200px]">
-        {PREDEFINED_COLORS.map(c => (
-          <button
-            key={c}
-            type="button"
-            className={`w-[14px] h-[14px] rounded-[2px] cursor-pointer border ${color === c ? 'border-gray-800 scale-125' : 'border-black/10 hover:scale-110'} transition-transform`}
-            style={{ backgroundColor: c }}
-            onClick={(e) => { e.stopPropagation(); setColor(c); }}
-          />
-        ))}
-      </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 w-full justify-center items-center">
+        <ColorPicker eventColor={color} setEventColor={setColor} />
         <button onClick={handleSave}
           className="bg-blue-500 hover:bg-blue-600 text-white
             py-1 px-3 rounded text-xs flex items-center

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { X, Edit2 } from 'lucide-react';
+import { X, Edit2, Copy } from 'lucide-react';
 import type { TimelineEvent } from '../types/timeline';
 import { useTimelineStore } from '../store/timelineStore';
 import { useDraggableEvent } from '../hooks/useDraggableEvent';
@@ -14,7 +14,7 @@ interface DraggableEventProps {
 export const DraggableEvent: React.FC<DraggableEventProps> = (
   { evt, maxEndTime, events }
 ) => {
-  const { removeEvent, updateEvent } = useTimelineStore();
+  const { addEvent, removeEvent, updateEvent } = useTimelineStore();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -40,6 +40,28 @@ export const DraggableEvent: React.FC<DraggableEventProps> = (
       return;
     }
     setIsEditing(false);
+  };
+
+  const handleDuplicate = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const duration = evt.endMs - evt.startMs;
+    const flowEvents = events
+      .filter((e) => e.flowId === evt.flowId)
+      .sort((a, b) => a.startMs - b.startMs);
+    
+    let currentStart = 0;
+    for (const fe of flowEvents) {
+      if (fe.startMs - currentStart >= duration) break;
+      currentStart = Math.max(currentStart, fe.endMs);
+    }
+    
+    addEvent({
+      flowId: evt.flowId,
+      title: `${evt.title} (Copy)`,
+      startMs: currentStart,
+      endMs: currentStart + duration,
+      color: evt.color,
+    });
   };
 
   return (
@@ -72,6 +94,10 @@ export const DraggableEvent: React.FC<DraggableEventProps> = (
             <button onClick={(e) => { e.stopPropagation(); setIsEditing(true); }}
               className="p-[3px] text-black/50 hover:text-blue-600 cursor-pointer" title="Edit">
               <Edit2 size={12} />
+            </button>
+            <button onClick={handleDuplicate}
+              className="p-[3px] text-black/50 hover:text-green-600 cursor-pointer" title="Duplicate">
+              <Copy size={12} />
             </button>
             <button onClick={(e) => { e.stopPropagation(); if (confirm('Delete this event?')) removeEvent(evt.id); }}
               className="delete-btn p-[3px] text-black/50 hover:text-red-600 cursor-pointer" title="Delete">
