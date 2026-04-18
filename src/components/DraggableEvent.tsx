@@ -18,18 +18,19 @@ export const DraggableEvent: React.FC<DraggableEventProps> = (
   const containerRef = useRef<HTMLDivElement>(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  const { dragMode, currentStart, currentEnd, handlePointerDown } =
+  const { dragMode, dragOffsetY, currentStart, currentEnd, handlePointerDown } =
     useDraggableEvent({ evt, maxEndTime, events, containerRef });
 
   const leftPct = (currentStart / maxEndTime) * 100;
   const widthPct = ((currentEnd - currentStart) / maxEndTime) * 100;
-  const style = {
+  const style: React.CSSProperties = {
     left: `${leftPct}%`,
     width: `${Math.max(widthPct, 0.5)}%`,
     backgroundColor: evt.color || '#3b82f6',
     cursor: dragMode === 'move' ? 'grabbing' : 'grab',
     zIndex: dragMode || isEditing ? 10 : 1,
     containerType: 'inline-size' as const,
+    transform: dragOffsetY ? `translateY(${dragOffsetY}px)` : undefined,
   };
 
   const handleSave = (fields: Partial<TimelineEvent>) => {

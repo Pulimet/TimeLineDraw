@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useTimelineStore } from '../../store/timelineStore';
-import { PREDEFINED_COLORS } from '../../constants/colors';
+import { ColorPicker } from './ColorPicker';
 
 export const AddEventForm: React.FC = () => {
   const { flows, events, addEvent } = useTimelineStore();
@@ -117,23 +117,7 @@ export const AddEventForm: React.FC = () => {
               setEventEndMs(Number(e.target.value.replace(/\D/g, '')))
             } />
         </div>
-        <div className="col-span-1 flex items-end justify-between">
-          <div>
-            <label className="block text-xs text-gray-500 mb-1">
-              Color
-            </label>
-            <input type="color"
-              className="w-8 h-8 rounded border-none cursor-pointer
-                p-0 m-0 box-border"
-              value={eventColor}
-              onChange={(e) => setEventColor(e.target.value)}
-              list="presetColors" />
-            <datalist id="presetColors">
-              {PREDEFINED_COLORS.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </datalist>
-          </div>
+        <div className="col-span-1 flex items-end justify-end">
           <button type="submit"
             disabled={!eventTitle || eventEndMs <= eventStartMs}
             className="bg-green-600 hover:bg-green-700 text-white
@@ -143,6 +127,7 @@ export const AddEventForm: React.FC = () => {
           </button>
         </div>
       </div>
+      <ColorPicker eventColor={eventColor} setEventColor={setEventColor} />
     </form>
   );
 };

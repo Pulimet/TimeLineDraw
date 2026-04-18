@@ -62,17 +62,17 @@ export const EventEditOverlay: React.FC<EventEditOverlayProps> = ({
             rounded text-center focus:outline-none
             focus:border-blue-500"
         />
-        <input
-          type="color" value={color}
-          onChange={(e) => setColor(e.target.value)}
-          className="w-6 h-6 rounded border-none cursor-pointer"
-          list="editPresetColors"
-        />
-        <datalist id="editPresetColors">
-          {PREDEFINED_COLORS.map((c) => (
-            <option key={c} value={c} />
-          ))}
-        </datalist>
+      </div>
+      <div className="flex flex-wrap gap-1 justify-center my-1 w-full max-w-[200px]">
+        {PREDEFINED_COLORS.map(c => (
+          <button
+            key={c}
+            type="button"
+            className={`w-[14px] h-[14px] rounded-[2px] cursor-pointer border ${color === c ? 'border-gray-800 scale-125' : 'border-black/10 hover:scale-110'} transition-transform`}
+            style={{ backgroundColor: c }}
+            onClick={(e) => { e.stopPropagation(); setColor(c); }}
+          />
+        ))}
       </div>
       <div className="flex gap-2">
         <button onClick={handleSave}

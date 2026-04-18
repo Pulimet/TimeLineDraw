@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
-
+- **Cross-Flow Drag**: Allowed dragging and dropping events vertically between different flows seamlessly.
 - **Undo/Redo**: Integrated `zundo` for state management and created `UndoRedoControls` component.
 - **Clear All**: Added functionality and button to clear all flows and events at once.
 - **Event Editing**: Added inline editing functionality to draggable events allowing users to directly adjust start and end times and save changes.
@@ -22,6 +22,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **Color Selection UI**: Replaced native color inputs with robust inline color swatches and expanded predefined palette to 24 colors.
 - **Responsive Design**: Enhanced `DraggableEvent` display by adding inline-size container type, improving duration title, and adjusting time label visibility, including hiding time range labels on smaller screens.
 - **UI Improvements**: Refactored the `DraggableEvent` component, improving input sizes, button styles, and the styling for the duration label.
 - **Layout Adjustments**: Various padding and alignment fixes across TimelineContainer, App, Controls, and AddFlowForm.

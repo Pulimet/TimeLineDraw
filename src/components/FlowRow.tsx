@@ -96,7 +96,7 @@ export const FlowRow: React.FC<FlowRowProps> = (
       </div>
 
       {!hidden && (
-        <div className="flex-grow relative h-full">
+        <div className="flex-grow relative h-full flow-events-container" data-flow-id={flow.id}>
           {events.map((evt) => (
             <DraggableEvent key={evt.id} evt={evt}
               maxEndTime={maxEndTime} events={events} />
