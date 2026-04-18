@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Flow Column Resizing**: Navigational flow row columns on the left can now be fully resized by horizontally dragging their edges, and are permanently tracked via `localStorage` alongside JSON outputs.
 - **Event Duplication**: Added a 'Duplicate' button when hovering over events that seamlessly clones the event and places it sequentially into the earliest non-overlapping slot.
 - **Cross-Flow Drag**: Allowed dragging and dropping events vertically between different flows seamlessly.
 - **Undo/Redo**: Integrated `zundo` for state management and created `UndoRedoControls` component.

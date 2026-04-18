@@ -10,6 +10,8 @@ interface TimelineState {
   events: TimelineEvent[];
   maxDuration: number;
   zoom: number;
+  flowColumnWidth: number;
+  setFlowColumnWidth: (width: number) => void;
   addFlow: (title: string) => void;
   removeFlow: (id: string) => void;
   updateFlowTitle: (id: string, title: string) => void;
@@ -32,7 +34,9 @@ export const useTimelineStore = create<TimelineState>()(
         events: [],
         maxDuration: 10000,
         zoom: 1,
+        flowColumnWidth: 192,
 
+        setFlowColumnWidth: (flowColumnWidth) => set({ flowColumnWidth }),
         setMaxDuration: (maxDuration) => set({ maxDuration }),
         setZoom: (zoom) => set({ zoom }),
         importData: (data) =>
@@ -119,6 +123,7 @@ export const useTimelineStore = create<TimelineState>()(
         events: state.events,
         maxDuration: state.maxDuration,
         zoom: state.zoom,
+        flowColumnWidth: state.flowColumnWidth,
       }),
     }
   )

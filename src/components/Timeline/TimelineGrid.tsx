@@ -1,10 +1,12 @@
 import React from 'react';
+import { useTimelineStore } from '../../store/timelineStore';
 
 interface TimelineGridProps {
   maxEndTime: number;
 }
 
 export const TimelineGrid: React.FC<TimelineGridProps> = ({ maxEndTime }) => {
+  const { flowColumnWidth } = useTimelineStore();
   const numMajorTicks = Math.ceil(maxEndTime / 1000);
   const majorTicks = Array.from({ length: numMajorTicks + 1 }, (_, i) => i * 1000);
   
@@ -12,7 +14,10 @@ export const TimelineGrid: React.FC<TimelineGridProps> = ({ maxEndTime }) => {
   const minorTicks = Array.from({ length: numMinorTicks + 1 }, (_, i) => i * 100);
 
   return (
-    <div className="absolute top-0 bottom-0 left-48 right-0 pointer-events-none z-0 overflow-hidden">
+    <div 
+      className="absolute top-0 bottom-0 right-0 pointer-events-none z-0 overflow-hidden" 
+      style={{ left: flowColumnWidth }}
+    >
       {minorTicks.map((tick) => (
         <div
           key={`minor-${tick}`}

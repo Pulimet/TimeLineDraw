@@ -15,7 +15,7 @@ interface FlowRowProps {
 export const FlowRow: React.FC<FlowRowProps> = (
   { flow, events, maxEndTime }
 ) => {
-  const { removeFlow, updateFlowTitle, toggleFlowVisibility } =
+  const { removeFlow, updateFlowTitle, toggleFlowVisibility, flowColumnWidth } =
     useTimelineStore();
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(flow.title);
@@ -49,9 +49,10 @@ export const FlowRow: React.FC<FlowRowProps> = (
         transition-colors ${hidden ? 'h-8' : 'h-14'}
         ${hidden ? 'bg-gray-100/50 opacity-60' : 'hover:bg-gray-50/50'}`}
     >
-      <div className="w-48 shrink-0 bg-gray-100 border-r border-gray-200
-        flex items-center px-2 py-1 relative z-10
-        shadow-[1px_0_0_rgba(0,0,0,0.1)] justify-between">
+      <div 
+        className="shrink-0 bg-gray-100 border-r border-gray-200 flex items-center px-2 py-1 relative z-10 justify-between shadow-[1px_0_0_rgba(0,0,0,0.1)] bg-gray-100 sticky left-0"
+        style={{ width: flowColumnWidth, minWidth: flowColumnWidth, maxWidth: flowColumnWidth }}
+      >
         <div className="flex items-center gap-1 overflow-hidden">
           <div {...attributes} {...listeners}
             className="cursor-grab text-gray-400 hover:text-gray-600">
@@ -86,7 +87,11 @@ export const FlowRow: React.FC<FlowRowProps> = (
             title={hidden ? 'Show Flow' : 'Hide Flow'}>
             {hidden ? <EyeOff size={14} /> : <Eye size={14} />}
           </button>
-          <button onClick={() => removeFlow(flow.id)}
+          <button onClick={() => {
+            if (window.confirm('Are you sure you want to delete this flow and all its events?')) {
+              removeFlow(flow.id);
+            }
+          }}
             className="text-gray-400 hover:text-red-500
               opacity-0 group-hover:opacity-100 transition-opacity p-1"
             title="Delete Flow">
