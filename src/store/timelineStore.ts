@@ -13,6 +13,7 @@ interface TimelineState {
   addFlow: (title: string) => void;
   removeFlow: (id: string) => void;
   updateFlowTitle: (id: string, title: string) => void;
+  toggleFlowVisibility: (id: string) => void;
   reorderFlows: (flows: Flow[]) => void;
   addEvent: (event: Omit<TimelineEvent, 'id'>) => boolean;
   updateEvent: (id: string, event: Partial<TimelineEvent>) => boolean;
@@ -56,6 +57,13 @@ export const useTimelineStore = create<TimelineState>()(
         updateFlowTitle: (id, title) =>
           set((state) => ({
             flows: state.flows.map((f) => (f.id === id ? { ...f, title } : f)),
+          })),
+
+        toggleFlowVisibility: (id) =>
+          set((state) => ({
+            flows: state.flows.map((f) =>
+              f.id === id ? { ...f, hidden: !f.hidden } : f
+            ),
           })),
 
         reorderFlows: (flows) => set({ flows }),

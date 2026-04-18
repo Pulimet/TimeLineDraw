@@ -1,6 +1,7 @@
 export interface Flow {
   id: string;
   title: string;
+  hidden?: boolean;
 }
 
 export interface TimelineEvent {
